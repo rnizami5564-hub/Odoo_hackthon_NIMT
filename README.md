@@ -1,11 +1,12 @@
 # Odoo_hackthon_NIMT
-1:MOHAMMAD RAZA NIZAMI 
-2:MD REHAN AHMAD
-3:SYED YASEEN AHMAD
-4:RHYTHM
-# 🏢 Automated Human Resource Management System (HRMS)
 
-Hi Welcome to our project repository. We built a **Human Resource Management System (HRMS)** designed to take the headache out of everyday workplace operations. 
+1:MOHAMMAD RAZA NIZAMI </br>
+2:MD REHAN </br>
+3:SYED YASIN AHMAD</br>
+4:RHYTHM
+# 🏢 Our Hackathon Project: A Better, Simpler HRMS
+
+Hey there! Welcome to our project repository. We built a **Human Resource Management System (HRMS)** designed to take the headache out of everyday workplace operations.
 
 Instead of juggling clunky spreadsheets, paper leave forms, and scattered emails, our platform brings everything—onboarding, profiles, attendance tracking, leave requests, and payroll—into one clean, secure dashboard.
 
@@ -104,5 +105,4 @@ Make sure you have Node.js (or Python, depending on your setup) and git installe
 * [ ] Create visual charts analyzing team-by-team burnout risks based on who hasn't taken leave in a while.
 
 ---
-<p align="center">Built with a lot of hurry by our Team </p>
-
+<p align="center">Built with a lot of hardwork and hurry by Your Team </p>

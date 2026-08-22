@@ -1,4 +1,4 @@
-
+{
   "name": "hrms-auth",
   "version": "1.0.0",
   "private": true,
@@ -16,3 +16,5 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "recharts": "^2.15.3"
+  }
+}
