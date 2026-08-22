@@ -12,7 +12,7 @@ Hey there! Welcome to our project repository. We built a **Human Resource Manage
 Instead of juggling clunky spreadsheets, paper leave forms, and scattered emails, our platform brings everything—onboarding, profiles, attendance tracking, leave requests, and payroll—into one clean, secure dashboard.
 
 ## 🔗 Quick Links
-* **See it live:** [Insert Live Demo Link here]
+* **See it live:** file:///C:/Users/raza_/Downloads/front.html
 
 ---
 
