@@ -1,0 +1,18 @@
+
+  "name": "hrms-auth",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "check": "node --check src/config/db.js && node --check src/controllers/auth.controller.js && node --check src/controllers/attendance.controller.js && node --check src/controllers/leave.controller.js && node --check src/middleware/auth.middleware.js && node --check src/routes/auth.routes.js && node --check src/routes/attendance.routes.js && node --check src/routes/leave.routes.js && node --check src/app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "recharts": "^2.15.3"
