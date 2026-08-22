@@ -104,5 +104,5 @@ Make sure you have Node.js (or Python, depending on your setup) and git installe
 * [ ] Create visual charts analyzing team-by-team burnout risks based on who hasn't taken leave in a while.
 
 ---
-<p align="center">Built with a lot of coffee by [Your Team Name] ☕</p>
+<p align="center">Built with a lot of hurry by our Team </p>
 
