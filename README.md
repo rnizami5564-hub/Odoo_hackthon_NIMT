@@ -1,10 +1,11 @@
 # Odoo_hackthon_NIMT
-
+OUR FIRST HACKATHON IN FIRST YEAR.</br>
+100% AI</br>
 1:MOHAMMAD RAZA NIZAMI </br>
 2:MD REHAN </br>
 3:SYED YASIN AHMAD</br>
 4:RHYTHM
-# 🏢 Our Hackathon Project: A Better, Simpler HRMS
+# 🏢 Our Hackathon Project: A Simple HRMS
 
 Hey there! Welcome to our project repository. We built a **Human Resource Management System (HRMS)** designed to take the headache out of everyday workplace operations.
 
@@ -12,8 +13,6 @@ Instead of juggling clunky spreadsheets, paper leave forms, and scattered emails
 
 ## 🔗 Quick Links
 * **See it live:** [Insert Live Demo Link here]
-* **Watch our video walkthrough:** [Insert YouTube or Loom Link here]
-* **Our Devpost Submission page:** [Insert Devpost Link here]
 
 ---
 
