@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dayflow - HRMS</title>
+    <meta name="description" content="Dayflow — A modern Human Resource Management System for attendance tracking, leave management, and HR operations.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f2f8;
+            color: #1f2937;
+        }
+
+        /* ───── ANIMATIONS ───── */
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.04); }
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+
+        @keyframes gradientShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-in {
+            animation: fadeIn .45s ease-out both;
+        }
+
+        /* ───── LOGIN ───── */
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 40%, #a855f7 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -120px;
+            right: -120px;
+        }
+
+        .login-page::after {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            bottom: -80px;
+            left: -80px;
+        }
+
+        .login-box {
+            width: 410px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px 36px;
+            border-radius: 22px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            animation: fadeIn .6s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color .25s, box-shadow .25s;
+            background: #fafbfc;
+        }
+
+        input:focus, select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+            background: white;
+        }
+
+        .btn {
+            border: none;
+            padding: 13px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all .25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .primary {
+            background: linear-gradient(135deg, #4f46e5, #6d5ce8);
+            color: white;
+            width: 100%;
+            box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+        }
+
+        .primary:hover {
+            background: linear-gradient(135deg, #4338ca, #5b4bd5);
+            box-shadow: 0 6px 20px rgba(79,70,229,0.45);
+            transform: translateY(-1px);
+        }
+
+        /* ───── APP SHELL ───── */
+
+        .app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* ───── SIDEBAR ───── */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            padding: 28px 16px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 26px;
+            font-weight: 800;
+            padding: 0 14px 8px;
+            background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-label {
+            padding: 0 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 1.2px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 20px 10px 16px;
+        }
+
+        .nav-item {
+            padding: 12px 14px;
+            margin: 3px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all .2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: rgba(79,70,229,0.15);
+            color: #c7d2fe;
+            transform: translateX(3px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #4f46e5, #6d5ce8);
+            color: white;
+            box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ───── MAIN ───── */
+
+        .main {
+            margin-left: 250px;
+            padding: 32px 36px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            animation: fadeIn .35s ease-out;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: -0.3px;
+        }
+
+        .topbar-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #111827;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+        }
+
+        /* ───── CARDS ───── */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+            transition: transform .25s, box-shadow .25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 0 0 0 80px;
+            opacity: 0.08;
+        }
+
+        .card:nth-child(1)::after { background: #4f46e5; }
+        .card:nth-child(2)::after { background: #10b981; }
+        .card:nth-child(3)::after { background: #f59e0b; }
+        .card:nth-child(4)::after { background: #ef4444; }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .card:nth-child(1) .card-icon { background: #eef2ff; }
+        .card:nth-child(2) .card-icon { background: #ecfdf5; }
+        .card:nth-child(3) .card-icon { background: #fffbeb; }
+        .card:nth-child(4) .card-icon { background: #fef2f2; }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .card-number {
+            font-size: 32px;
+            font-weight: 800;
+            margin-top: 6px;
+            color: #111827;
+        }
+
+        .card-change {
+            font-size: 12px;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .card-change.up   { color: #10b981; }
+        .card-change.down { color: #ef4444; }
+
+        /* ───── CONTENT ───── */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
+        }
+
+        .panel {
+            background: white;
+            padding: 26px;
+            border-radius: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+            margin-bottom: 22px;
+            animation: fadeIn .4s ease-out both;
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
+        }
+
+        th {
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr {
+            transition: background .15s;
+        }
+
+        tbody tr:hover {
+            background: #fafbfc;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .present  { background: #dcfce7; color: #166534; }
+        .pending  { background: #fef3c7; color: #92400e; }
+        .approved { background: #dcfce7; color: #166534; }
+        .rejected { background: #fee2e2; color: #991b1b; }
+        .half-day { background: #e0e7ff; color: #3730a3; }
+
+        .action-btn {
+            padding: 7px 13px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: all .2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .approve { background: #16a34a; color: white; box-shadow: 0 2px 8px rgba(22,163,74,0.3); }
+        .reject  { background: #dc2626; color: white; box-shadow: 0 2px 8px rgba(220,38,38,0.3); }
+
+        /* ───── PROFILE ───── */
+
+        .profile {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 35px;
+        }
+
+        .profile-photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #e0e7ff, #ede9fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 800;
+            color: #4f46e5;
+            box-shadow: 0 6px 20px rgba(79,70,229,0.15);
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .info-box {
+            background: #f9fafb;
+            padding: 16px 18px;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            transition: all .2s;
+        }
+
+        .info-box:hover {
+            border-color: #e0e7ff;
+            background: #fafbff;
+        }
+
+        .info-box span {
+            display: block;
+            color: #6b7280;
+            font-size: 11px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .info-box strong {
+            font-size: 14px;
+            color: #111827;
+        }
+
+        /* ───── FORM ───── */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color .25s, box-shadow .25s;
+            background: #fafbfc;
+        }
+
+        textarea:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+            outline: none;
+            background: white;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        /* ───── TOAST ───── */
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 9999;
+            animation: fadeIn .35s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
+        .toast.error   { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast.info    { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+        /* ───── SECONDARY BUTTON ───── */
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1.5px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        /* ───── EMPTY STATE ───── */
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        /* ───── RESPONSIVE ───── */
+
+        @media(max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 900px) {
+            .sidebar { width: 200px; }
+            .main    { margin-left: 200px; padding: 24px; }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            .sidebar    { display: none; }
+            .main       { margin-left: 0; padding: 18px; }
+            .cards      { grid-template-columns: 1fr; }
+            .profile    { grid-template-columns: 1fr; }
+            .profile-info,
+            .form-grid  { grid-template-columns: 1fr; }
+            .topbar     { flex-direction: column; align-items: flex-start; gap: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ═══════════ LOGIN PAGE ═══════════ -->
+
+<div class="login-page" id="loginPage">
+
+    <div class="login-box">
+
+        <div class="logo">Dayflow</div>
+        <p class="subtitle">Human Resource Management System</p>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+
+        <div class="input-group">
+            <label for="role">Login as</label>
+            <select id="role">
+                <option value="employee">Employee</option>
+                <option value="admin">Admin / HR</option>
+            </select>
+        </div>
+
+        <button class="btn primary" id="loginBtn" onclick="login()">
+            Sign In
+        </button>
+
+        <p id="loginError" style="color:#ef4444; margin-top:14px; font-size:13px; font-weight:500;"></p>
+
+        <p style="text-align:center; margin-top:18px; font-size:12px; color:#9ca3af;">
+            Demo: any email &amp; password (min 3 chars)
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ═══════════ APPLICATION ═══════════ -->
+
+<div class="app" id="app">
+
+    <!-- ─── SIDEBAR ─── -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-logo">Dayflow</div>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-label">Menu</div>
+
+        <div class="nav-item active" onclick="showPage('dashboard', this)" id="navDashboard">
+            <span class="nav-icon">🏠</span> Dashboard
+        </div>
+
+        <div class="nav-item" onclick="showPage('profile', this)" id="navProfile">
+            <span class="nav-icon">👤</span> Profile
+        </div>
+
+        <div class="nav-item" onclick="showPage('attendance', this)" id="navAttendance">
+            <span class="nav-icon">🕐</span> Attendance
+        </div>
+
+        <div class="nav-item" onclick="showPage('leave', this)" id="navLeave">
+            <span class="nav-icon">📅</span> Leave Requests
+        </div>
+
+        <div class="nav-item" id="adminNav" onclick="showPage('admin', this)" style="display:none;">
+            <span class="nav-icon">🛠</span> HR Management
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="nav-item" onclick="logout()" style="color:#f87171;">
+            <span class="nav-icon">🚪</span> Logout
+        </div>
+
+    </aside>
+
+
+    <!-- ─── MAIN CONTENT ─── -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1 id="pageTitle">Dashboard</h1>
+                <p class="topbar-subtitle" id="pageSubtitle">Welcome back to Dayflow</p>
+            </div>
+
+            <div class="user">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Rahul Sharma</div>
+                    <div class="user-role" id="userRole">Employee</div>
+                </div>
+                <div class="avatar" id="userAvatar">R</div>
+            </div>
+
+        </div>
+
+
+        <!-- ═══ DASHBOARD ═══ -->
+
+        <section id="dashboard" class="page animate-in">
+
+            <div class="cards">
+
+                <div class="card" style="animation-delay:.05s">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Attendance Rate</div>
+                    <div class="card-number" id="statAttendance">92%</div>
+                    <div class="card-change up">▲ 2% from last month</div>
+                </div>
+
+                <div class="card" style="animation-delay:.1s">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">Present Days</div>
+                    <div class="card-number" id="statPresent">22</div>
+                    <div class="card-change up">This month</div>
+                </div>
+
+                <div class="card" style="animation-delay:.15s">
+                    <div class="card-icon">🏖</div>
+                    <div class="card-title">Leave Balance</div>
+                    <div class="card-number" id="statLeave">12</div>
+                    <div class="card-change">Days remaining</div>
+                </div>
+
+                <div class="card" style="animation-delay:.2s">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">Monthly Salary</div>
+                    <div class="card-number" id="statSalary">₹45K</div>
+                    <div class="card-change up">Credited on 1st</div>
+                </div>
+
+            </div>
+
+
+            <div class="content-grid">
+
+                <div class="panel">
+
+                    <h2>Recent Attendance</h2>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashAttendance">
+                            <tr>
+                                <td>22 Aug 2026</td>
+                                <td>09:05 AM</td>
+                                <td>—</td>
+                                <td><span class="badge present">Present</span></td>
+                            </tr>
+                            <tr>
+                                <td>21 Aug 2026</td>
+                                <td>09:02 AM</td>
+                                <td>06:10 PM</td>
+                                <td><span class="badge present">Present</span></td>
+                            </tr>
+                            <tr>
+                                <td>20 Aug 2026</td>
+                                <td>09:30 AM</td>
+                                <td>02:00 PM</td>
+                                <td><span class="badge half-day">Half Day</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div>
+
+                    <div class="panel">
+
+                        <h2>Quick Actions</h2>
+
+                        <button class="btn primary" onclick="checkIn()" id="dashCheckIn" style="width:100%; margin-bottom:12px;">
+                            🟢 &nbsp;Check In
+                        </button>
+
+                        <button class="btn btn-secondary" style="width:100%; margin-bottom:12px;" onclick="checkOut()">
+                            🔴 &nbsp;Check Out
+                        </button>
+
+                        <button class="btn btn-outline" style="width:100%;" onclick="showPage('leave', document.getElementById('navLeave'))">
+                            📝 &nbsp;Apply for Leave
+                        </button>
+
+                    </div>
+
+                    <div class="panel">
+                        <h2>Today's Summary</h2>
+                        <div style="text-align:center; padding:12px 0;">
+                            <div style="font-size:36px; margin-bottom:6px;">⏰</div>
+                            <div style="font-size:13px; color:#6b7280;" id="todaySummary">
+                                Checked in at 09:05 AM
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ═══ PROFILE ═══ -->
+
+        <section id="profile" class="page" style="display:none;">
+
+            <div class="panel animate-in">
+
+                <div class="profile">
+
+                    <div style="text-align:center;">
+                        <div class="profile-photo" id="profileAvatar">RS</div>
+                        <br>
+                        <button class="btn btn-secondary" style="font-size:13px;">
+                            📷 Change Photo
+                        </button>
+                    </div>
+
+                    <div>
+                        <h2 style="margin-bottom:22px;">Employee Profile</h2>
+
+                        <div class="profile-info">
+
+                            <div class="info-box">
+                                <span>Full Name</span>
+                                <strong id="profName">Rahul Sharma</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Employee ID</span>
+                                <strong id="profEmpId">EMP1024</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Email Address</span>
+                                <strong id="profEmail">rahul@example.com</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Phone Number</span>
+                                <strong id="profPhone">+91 9876543210</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Department</span>
+                                <strong id="profDept">Computer Science</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Designation</span>
+                                <strong id="profDesig">Software Engineer</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Monthly Salary</span>
+                                <strong id="profSalary">₹45,000</strong>
+                            </div>
+
+                            <div class="info-box">
+                                <span>Joining Date</span>
+                                <strong id="profJoining">01 August 2026</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ═══ ATTENDANCE ═══ -->
+
+        <section id="attendance" class="page" style="display:none;">
+
+            <div class="panel animate-in">
+
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+                    <h2 style="margin-bottom:0;">Attendance Log</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn primary" onclick="checkIn()" style="width:auto;">
+                            🟢 &nbsp;Check In
+                        </button>
+                        <button class="btn btn-secondary" onclick="checkOut()">
+                            🔴 &nbsp;Check Out
+                        </button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Hours</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTable">
+                        <tr>
+                            <td>22 Aug 2026</td>
+                            <td id="todayIn">09:05 AM</td>
+                            <td id="todayOut">—</td>
+                            <td>—</td>
+                            <td><span class="badge present">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>21 Aug 2026</td>
+                            <td>09:02 AM</td>
+                            <td>06:10 PM</td>
+                            <td>9h 08m</td>
+                            <td><span class="badge present">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>20 Aug 2026</td>
+                            <td>09:30 AM</td>
+                            <td>02:00 PM</td>
+                            <td>4h 30m</td>
+                            <td><span class="badge half-day">Half Day</span></td>
+                        </tr>
+                        <tr>
+                            <td>19 Aug 2026</td>
+                            <td>08:55 AM</td>
+                            <td>06:00 PM</td>
+                            <td>9h 05m</td>
+                            <td><span class="badge present">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>18 Aug 2026</td>
+                            <td>09:10 AM</td>
+                            <td>06:15 PM</td>
+                            <td>9h 05m</td>
+                            <td><span class="badge present">Present</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ═══ LEAVE ═══ -->
+
+        <section id="leave" class="page" style="display:none;">
+
+            <div class="panel animate-in">
+
+                <h2>Apply for Leave</h2>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label for="leaveType">Leave Type</label>
+                        <select id="leaveType">
+                            <option>Paid Leave</option>
+                            <option>Sick Leave</option>
+                            <option>Casual Leave</option>
+                            <option>Unpaid Leave</option>
+                        </select>
+                    </div>
+
+                    <div></div>
+
+                    <div>
+                        <label for="fromDate">From Date</label>
+                        <input type="date" id="fromDate">
+                    </div>
+
+                    <div>
+                        <label for="toDate">To Date</label>
+                        <input type="date" id="toDate">
+                    </div>
+
+                    <div class="full">
+                        <label for="remarks">Reason / Remarks</label>
+                        <textarea id="remarks" rows="4" placeholder="Reason for leave..."></textarea>
+                    </div>
+
+                    <div>
+                        <button class="btn primary" onclick="applyLeave()" style="width:auto;">
+                            📩 &nbsp;Submit Request
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="panel animate-in" style="animation-delay:.1s">
+
+                <h2>My Leave Requests</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Days</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaveHistory">
+                        <tr>
+                            <td>Sick Leave</td>
+                            <td>15 Aug 2026</td>
+                            <td>16 Aug 2026</td>
+                            <td>2</td>
+                            <td><span class="badge approved">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td>Paid Leave</td>
+                            <td>05 Aug 2026</td>
+                            <td>05 Aug 2026</td>
+                            <td>1</td>
+                            <td><span class="badge approved">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td>Casual Leave</td>
+                            <td>25 Jul 2026</td>
+                            <td>26 Jul 2026</td>
+                            <td>2</td>
+                            <td><span class="badge rejected">Rejected</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ═══ ADMIN / HR MANAGEMENT ═══ -->
+
+        <section id="admin" class="page" style="display:none;">
+
+            <!-- Admin Stats -->
+            <div class="cards" style="margin-bottom:24px;">
+                <div class="card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Total Employees</div>
+                    <div class="card-number" id="adminTotalEmp">24</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">Present Today</div>
+                    <div class="card-number" id="adminPresentToday">21</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Pending Leaves</div>
+                    <div class="card-number" id="adminPendingLeaves">3</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🏢</div>
+                    <div class="card-title">Departments</div>
+                    <div class="card-number">5</div>
+                </div>
+            </div>
+
+            <!-- Pending Leave Requests -->
+            <div class="panel animate-in">
+
+                <h2>Pending Leave Requests</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Days</th>
+                            <th>Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminLeaveTable">
+                        <tr id="adminLeave1">
+                            <td>Priya Patel</td>
+                            <td>Sick Leave</td>
+                            <td>24 Aug 2026</td>
+                            <td>25 Aug 2026</td>
+                            <td>2</td>
+                            <td>Fever</td>
+                            <td>
+                                <button class="action-btn approve" onclick="handleLeave('adminLeave1','approved')">✓ Approve</button>
+                                <button class="action-btn reject" onclick="handleLeave('adminLeave1','rejected')">✕ Reject</button>
+                            </td>
+                        </tr>
+                        <tr id="adminLeave2">
+                            <td>Amit Kumar</td>
+                            <td>Paid Leave</td>
+                            <td>26 Aug 2026</td>
+                            <td>28 Aug 2026</td>
+                            <td>3</td>
+                            <td>Family function</td>
+                            <td>
+                                <button class="action-btn approve" onclick="handleLeave('adminLeave2','approved')">✓ Approve</button>
+                                <button class="action-btn reject" onclick="handleLeave('adminLeave2','rejected')">✕ Reject</button>
+                            </td>
+                        </tr>
+                        <tr id="adminLeave3">
+                            <td>Sneha Rao</td>
+                            <td>Casual Leave</td>
+                            <td>27 Aug 2026</td>
+                            <td>27 Aug 2026</td>
+                            <td>1</td>
+                            <td>Personal work</td>
+                            <td>
+                                <button class="action-btn approve" onclick="handleLeave('adminLeave3','approved')">✓ Approve</button>
+                                <button class="action-btn reject" onclick="handleLeave('adminLeave3','rejected')">✕ Reject</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- Employee Directory -->
+            <div class="panel animate-in" style="animation-delay:.1s">
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2 style="margin-bottom:0;">Employee Directory</h2>
+                    <button class="btn primary" onclick="showAddEmployee()" style="width:auto; font-size:13px;">
+                        ➕ Add Employee
+                    </button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeDirectory">
+                        <tr>
+                            <td>EMP1024</td>
+                            <td>Rahul Sharma</td>
+                            <td>Computer Science</td>
+                            <td>Software Engineer</td>
+                            <td>rahul@example.com</td>
+                            <td><span class="badge present">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>EMP1025</td>
+                            <td>Priya Patel</td>
+                            <td>Design</td>
+                            <td>UI/UX Designer</td>
+                            <td>priya@example.com</td>
+                            <td><span class="badge present">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>EMP1026</td>
+                            <td>Amit Kumar</td>
+                            <td>Marketing</td>
+                            <td>Marketing Lead</td>
+                            <td>amit@example.com</td>
+                            <td><span class="badge present">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>EMP1027</td>
+                            <td>Sneha Rao</td>
+                            <td>Finance</td>
+                            <td>Accounts Manager</td>
+                            <td>sneha@example.com</td>
+                            <td><span class="badge present">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>EMP1028</td>
+                            <td>Vikram Singh</td>
+                            <td>Computer Science</td>
+                            <td>DevOps Engineer</td>
+                            <td>vikram@example.com</td>
+                            <td><span class="badge pending">On Leave</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- Add Employee Modal (inline) -->
+            <div class="panel animate-in" id="addEmployeeForm" style="display:none; animation-delay:.15s">
+
+                <h2>Add New Employee</h2>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label for="newEmpName">Full Name</label>
+                        <input type="text" id="newEmpName" placeholder="e.g. John Doe">
+                    </div>
+
+                    <div>
+                        <label for="newEmpEmail">Email</label>
+                        <input type="email" id="newEmpEmail" placeholder="e.g. john@example.com">
+                    </div>
+
+                    <div>
+                        <label for="newEmpDept">Department</label>
+                        <select id="newEmpDept">
+                            <option>Computer Science</option>
+                            <option>Design</option>
+                            <option>Marketing</option>
+                            <option>Finance</option>
+                            <option>Human Resources</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="newEmpDesig">Designation</label>
+                        <input type="text" id="newEmpDesig" placeholder="e.g. Software Engineer">
+                    </div>
+
+                    <div>
+                        <label for="newEmpSalary">Monthly Salary (₹)</label>
+                        <input type="number" id="newEmpSalary" placeholder="e.g. 50000">
+                    </div>
+
+                    <div>
+                        <label for="newEmpPhone">Phone</label>
+                        <input type="text" id="newEmpPhone" placeholder="+91 XXXXXXXXXX">
+                    </div>
+
+                    <div>
+                        <button class="btn primary" onclick="addEmployee()" style="width:auto;">
+                            ✅ Add Employee
+                        </button>
+                        <button class="btn btn-secondary" onclick="hideAddEmployee()" style="margin-left:10px;">
+                            Cancel
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+
+<script>
+/* ─── STATE ─── */
+
+let currentUser = null;
+let checkedIn    = true;
+let checkInTime  = '09:05 AM';
+let checkOutTime = null;
+let empCounter   = 1029;
+
+const users = {
+    employee: {
+        name: 'Rahul Sharma',
+        empId: 'EMP1024',
+        email: 'rahul@example.com',
+        phone: '+91 9876543210',
+        dept: 'Computer Science',
+        desig: 'Software Engineer',
+        salary: '₹45,000',
+        joining: '01 August 2026',
+        role: 'Employee'
+    },
+    admin: {
+        name: 'Anita Verma',
+        empId: 'HR001',
+        email: 'anita@dayflow.com',
+        phone: '+91 9123456780',
+        dept: 'Human Resources',
+        desig: 'HR Manager',
+        salary: '₹72,000',
+        joining: '15 March 2025',
+        role: 'Admin / HR'
+    }
+};
+
+/* ─── LOGIN ─── */
+
+function login() {
+    const email = document.getElementById('email').value.trim();
+    const pass  = document.getElementById('password').value.trim();
+    const role  = document.getElementById('role').value;
+    const err   = document.getElementById('loginError');
+
+    if (!email || !pass) {
+        err.textContent = 'Please fill in all fields.';
+        return;
+    }
+
+    if (pass.length < 3) {
+        err.textContent = 'Password must be at least 3 characters.';
+        return;
+    }
+
+    err.textContent = '';
+    currentUser = users[role];
+
+    // Update UI
+    document.getElementById('userName').textContent  = currentUser.name;
+    document.getElementById('userRole').textContent   = currentUser.role;
+    document.getElementById('userAvatar').textContent  = currentUser.name.charAt(0);
+    document.getElementById('profileAvatar').textContent =
+        currentUser.name.split(' ').map(w => w[0]).join('');
+
+    // Profile fields
+    document.getElementById('profName').textContent    = currentUser.name;
+    document.getElementById('profEmpId').textContent   = currentUser.empId;
+    document.getElementById('profEmail').textContent   = currentUser.email;
+    document.getElementById('profPhone').textContent   = currentUser.phone;
+    document.getElementById('profDept').textContent    = currentUser.dept;
+    document.getElementById('profDesig').textContent   = currentUser.desig;
+    document.getElementById('profSalary').textContent  = currentUser.salary;
+    document.getElementById('profJoining').textContent = currentUser.joining;
+
+    // Admin nav
+    document.getElementById('adminNav').style.display =
+        role === 'admin' ? 'flex' : 'none';
+
+    // Switch views
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').style.display       = 'block';
+
+    showPage('dashboard', document.getElementById('navDashboard'));
+    toast('Welcome, ' + currentUser.name + '!', 'success');
+}
+
+function logout() {
+    document.getElementById('app').style.display       = 'none';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('email').value    = '';
+    document.getElementById('password').value = '';
+    currentUser = null;
+    toast('Signed out successfully', 'info');
+}
+
+/* ─── NAVIGATION ─── */
+
+function showPage(id, navEl) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+
+    // Show target
+    const page = document.getElementById(id);
+    if (page) {
+        page.style.display = 'block';
+        page.classList.remove('animate-in');
+        void page.offsetWidth;          // trigger reflow
+        page.classList.add('animate-in');
+    }
+
+    // Update nav active state
+    if (navEl) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        navEl.classList.add('active');
+    }
+
+    // Titles
+    const titles = {
+        dashboard:  ['Dashboard',       'Welcome back to Dayflow'],
+        profile:    ['Profile',         'View your personal information'],
+        attendance: ['Attendance',      'Track your daily attendance'],
+        leave:      ['Leave Requests',  'Apply and manage leaves'],
+        admin:      ['HR Management',   'Manage employees and requests']
+    };
+
+    if (titles[id]) {
+        document.getElementById('pageTitle').textContent    = titles[id][0];
+        document.getElementById('pageSubtitle').textContent = titles[id][1];
+    }
+}
+
+/* ─── ATTENDANCE ─── */
+
+function getTimeStr() {
+    return new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', hour12: true
+    });
+}
+
+function checkIn() {
+    if (checkedIn) {
+        toast('You are already checked in!', 'info');
+        return;
+    }
+
+    checkedIn   = true;
+    checkInTime = getTimeStr();
+
+    document.getElementById('todayIn').textContent = checkInTime;
+    document.getElementById('todaySummary').textContent =
+        'Checked in at ' + checkInTime;
+
+    toast('Checked in at ' + checkInTime, 'success');
+}
+
+function checkOut() {
+    if (!checkedIn) {
+        toast('You haven\'t checked in yet!', 'error');
+        return;
+    }
+
+    checkedIn    = false;
+    checkOutTime = getTimeStr();
+
+    document.getElementById('todayOut').textContent = checkOutTime;
+    document.getElementById('todaySummary').textContent =
+        'Checked out at ' + checkOutTime + '  •  Checked in at ' + checkInTime;
+
+    toast('Checked out at ' + checkOutTime, 'success');
+}
+
+/* ─── LEAVE APPLICATION ─── */
+
+function applyLeave() {
+    const type    = document.getElementById('leaveType').value;
+    const from    = document.getElementById('fromDate').value;
+    const to      = document.getElementById('toDate').value;
+    const remarks = document.getElementById('remarks').value.trim();
+
+    if (!from || !to) {
+        toast('Please select both dates.', 'error');
+        return;
+    }
+
+    if (new Date(to) < new Date(from)) {
+        toast('To-date cannot be before from-date.', 'error');
+        return;
+    }
+
+    const days = Math.ceil(
+        (new Date(to) - new Date(from)) / (1000 * 60 * 60 * 24)
+    ) + 1;
+
+    const fmtDate = d => new Date(d).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric'
+    });
+
+    const row = document.createElement('tr');
+    row.style.animation = 'fadeIn .35s ease-out';
+    row.innerHTML = `
+        <td>${type}</td>
+        <td>${fmtDate(from)}</td>
+        <td>${fmtDate(to)}</td>
+        <td>${days}</td>
+        <td><span class="badge pending">Pending</span></td>
+    `;
+
+    const tbody = document.getElementById('leaveHistory');
+    tbody.insertBefore(row, tbody.firstChild);
+
+    // Clear form
+    document.getElementById('fromDate').value  = '';
+    document.getElementById('toDate').value    = '';
+    document.getElementById('remarks').value   = '';
+
+    toast('Leave request submitted — ' + days + ' day(s)', 'success');
+}
+
+/* ─── ADMIN: LEAVE ACTIONS ─── */
+
+function handleLeave(rowId, action) {
+    const row  = document.getElementById(rowId);
+    if (!row) return;
+
+    const cells = row.querySelectorAll('td');
+    const last  = cells[cells.length - 1];
+
+    const cls   = action === 'approved' ? 'approved' : 'rejected';
+    const label = action === 'approved' ? 'Approved' : 'Rejected';
+
+    last.innerHTML = `<span class="badge ${cls}">${label}</span>`;
+
+    // Update pending count
+    const pendingEl = document.getElementById('adminPendingLeaves');
+    let count = parseInt(pendingEl.textContent) - 1;
+    if (count < 0) count = 0;
+    pendingEl.textContent = count;
+
+    toast('Leave request ' + label.toLowerCase(), action === 'approved' ? 'success' : 'error');
+}
+
+/* ─── ADMIN: ADD EMPLOYEE ─── */
+
+function showAddEmployee() {
+    const form = document.getElementById('addEmployeeForm');
+    form.style.display = 'block';
+    form.scrollIntoView({ behavior: 'smooth' });
+}
+
+function hideAddEmployee() {
+    document.getElementById('addEmployeeForm').style.display = 'none';
+}
+
+function addEmployee() {
+    const name  = document.getElementById('newEmpName').value.trim();
+    const email = document.getElementById('newEmpEmail').value.trim();
+    const dept  = document.getElementById('newEmpDept').value;
+    const desig = document.getElementById('newEmpDesig').value.trim();
+
+    if (!name || !email || !desig) {
+        toast('Please fill in all required fields.', 'error');
+        return;
+    }
+
+    const id  = 'EMP' + empCounter++;
+    const row = document.createElement('tr');
+    row.style.animation = 'fadeIn .35s ease-out';
+    row.innerHTML = `
+        <td>${id}</td>
+        <td>${name}</td>
+        <td>${dept}</td>
+        <td>${desig}</td>
+        <td>${email}</td>
+        <td><span class="badge present">Active</span></td>
+    `;
+
+    document.getElementById('employeeDirectory').appendChild(row);
+
+    // Update count
+    const totalEl = document.getElementById('adminTotalEmp');
+    totalEl.textContent = parseInt(totalEl.textContent) + 1;
+
+    // Clear
+    document.getElementById('newEmpName').value   = '';
+    document.getElementById('newEmpEmail').value  = '';
+    document.getElementById('newEmpDesig').value  = '';
+    document.getElementById('newEmpSalary').value = '';
+    document.getElementById('newEmpPhone').value  = '';
+
+    hideAddEmployee();
+    toast(name + ' added as ' + desig, 'success');
+}
+
+/* ─── TOAST ─── */
+
+function toast(msg, type = 'info') {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+
+    const icons = { success: '✓', error: '✕', info: 'ℹ' };
+    el.innerHTML = `<span style="font-size:18px;">${icons[type] || 'ℹ'}</span> ${msg}`;
+
+    document.body.appendChild(el);
+    setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all .3s ease';
+        setTimeout(() => el.remove(), 300);
+    }, 2800);
+}
+
+/* ─── ENTER KEY LOGIN ─── */
+
+document.getElementById('password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+});
+
+/* ─── SET TODAY'S DATE AS DEFAULT ─── */
+
+(function setDefaults() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fromDate').value = today;
+    document.getElementById('toDate').value   = today;
+})();
+</script>
+
+</body>
+</html>
